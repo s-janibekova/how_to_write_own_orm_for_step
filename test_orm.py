@@ -55,3 +55,25 @@ class Test03_CreateTables(Test02_DefineTables):
       assert table in db.tables
 
 
+class Test04_CreateAuthorInstance(Test03_CreateTables):
+  def test_it(self):
+    super().test_it()
+    global author
+
+    author = Author(name="SJ", lucky_number=8)
+
+    assert author.name == 'SJ'
+    assert  author.lucky_number == 8
+    assert author.id is None
+
+
+class Test05_SaveAuthorInstance(Test04_CreateAuthorInstance):
+  def test_it(self):
+    super().test_it()
+    db.save(author)
+
+    assert author._get_insert_sql() == (
+      "INSERT INTO author (lucky_number, name) VALUES (?, ?);",
+      [8, "SJ"]
+    )
+    assert author.id == 1
