@@ -24,7 +24,7 @@ class Database:
 
   @property
   def tables(self):
-    return []
+    return [ row[0] for row in self._execute(SELECT_TABLES_SQL).fetchall()]
 
   def create(self, table):
     self._execute(table._get_create_sql())
