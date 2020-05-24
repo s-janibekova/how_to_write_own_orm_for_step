@@ -1,0 +1,21 @@
+## 1
+SELECT_TABLES_SQL = "SELECT name FROM sqlite_master WHERE type "
+
+## 2
+SQLITE_TYPE_MAP = {
+  int: "INTEGER",
+  float: "REAL",
+  str: "TEXT",
+  bytes: "BLOB",
+  bool: "INTEGER", # 0 OR 1
+}
+
+## 3
+CREATE_TABLE_SQL = "CREATE TABLE {name} ({fields});"
+
+fields = [("id", "INTEGER PRIMARY KEY AUTOINCREMENT")]
+
+for name, field in inspect.getmembers(cls):
+  if isinstance(field, Column):
+    fields.append((name, field.sql_type))
+

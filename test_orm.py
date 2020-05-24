@@ -1,0 +1,57 @@
+import os
+import unittest
+
+DB_PATH = "./test.db"
+
+
+class Test01_CreateTestDatabase(unittest.TestCase):
+
+    def test_it(self):
+        global Database, db
+        from own_orm import Database
+
+        if os.path.exists(DB_PATH):
+            os.remove(DB_PATH)
+
+        db = Database(DB_PATH)
+
+        assert db.tables == []
+
+
+class Test02_DefineTables(Test01_CreateTestDatabase):
+
+    def test_it(self):
+        super().test_it()
+        global Table, Column, ForeignKey
+        global Author, Post
+
+        from own_orm import Table, Column, ForeignKey
+
+        class Author(Table):
+            name = Column(str)
+            lucky_number = Column(int)
+
+        class Post(Table):
+            title = Column(str)
+            published = Column(bool)
+            author = ForeignKey(Author)
+
+        assert Author.name.type == str
+        assert Post.author.table == Author
+
+
+
+class Test03_CreateTables(Test02_DefineTables):
+  def test_it(self):
+    super().test_it()
+
+    db.create(Author)
+    db.create(Post)
+
+    assert Author._get_create_sql() ==  "CREATE TABLE author (id INTEGER PRIMARY KEY AUTOINCREMENT, lucky_number INTEGER, name TEXT);"
+    assert Post._get_create_sql( ) == "CREATE TABLE post (id INTEGER PRIMARY KEY AUTOINCREMENT, author_id INTEGER, published INTEGER, title TEXT);"
+
+    for table in ('author', 'post'):
+      assert table in db.tables
+
+
